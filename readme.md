@@ -4,12 +4,13 @@ There's an increasingly significant market share of Postgres extensions that are
 * [ParadeDB](https://www.paradedb.com/) which adds BM25 full text search and hybrid search when used in concert with pgvector.
 * [Apache AGE](https://age.apache.org/) which provides graph database functionality.
 
-These extensions embed their calling conventions within SQL and even compose quite well within its relational model. It's desirable to extend Ecto to incorporate these calling conventions so developers can use these extensions with the amazing composition, caching, mapping, and other ammenities Ecto currently provides.
+These extensions embed their calling conventions within SQL and even compose quite well within its relational model. It's desirable to extend Ecto to incorporate these calling conventions, so developers can use these extensions with the amazing composition, caching, mapping, and other ammenities Ecto currently provides.
 
 The following SQL query is a deliberately limit-testing example from ParadeDB:
 ```sql
-SELECT "p0".*
+SELECT "p0".*, "a1".*
 FROM "posts" AS "p0"
+JOIN "authors" AS "a1" ON "a1".id = "p0".author_id
 WHERE
   "p0".id @@@ paradedb.boolean(
     must => ARRAY[
@@ -44,6 +45,8 @@ query =
       phrase(p.body, ["is", "awesome"], ^slop),
       phrase(p.body, ["are", "awesome"], ^slop)
     ]),
+    join: a in assoc(p, :author), 
+    preload: [author: a],
     limit: 20
   )
 
@@ -82,7 +85,10 @@ defmodule App.Post do
 end
 ```
 
-# For the morning:
-* Now that the problem domain's somewhat well defined, I can start proposing a solution here.
-* Or perhaps better put, I can open the conversation up to others.
-* This will likely take a while to get right, if it ends up a desirable and viable pursuit in the first place.
+# Discussion
+I'd like to start a discussion on what a possible extension API for Ecto could look like. It'd ideally allow users to extend Ecto in order to support extensions like the one above, obviating the need to fork Ecto or Ecto SQL to do so.
+
+The primary goals are to:
+* Gauge interest - Is this something enough people would like to see?
+* Gather requirements - What would prospective extensions need to introduce and modify?
+* Explore possible solutions - How could this go about being implemented?
