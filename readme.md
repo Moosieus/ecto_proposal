@@ -84,3 +84,5 @@ end
 
 # For the morning:
 * Now that the problem domain's somewhat well defined, I can start proposing a solution here.
+* Or perhaps better put, I can open the conversation up to others.
+* This will likely take a while to get right, if it ends up a desirable and viable pursuit in the first place.
